@@ -1,0 +1,12 @@
+{
+	"Ctrl-Left": "WordLeft",
+	"Ctrl-Right": "WordRight",
+	"Ctrl-Shift-Left": "SelectWordLeft",
+	"Ctrl-Shift-Right": "SelectWordRight",
+	"Ctrl-Backspace": "DeleteWordLeft",
+	"OldBackspace": "DeleteWordLeft",
+	"Ctrl-Delete": "DeleteWordRight",
+	"\u001b[3;5~": "DeleteWordRight",
+	// xfce4-terminal does not send ctrl-shift-z
+	"Shift-Ctrl-z": "Redo"
+}
