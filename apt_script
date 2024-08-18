@@ -1,0 +1,259 @@
+#!/bin/bash
+# A Package Script to help with using APT. Yes, that's what aps stands for.
+# 
+# The intended use is to source this file with bash and use the `aps` function.
+# You can do this by moving this script to `~/.apt_script` and then adding the
+# following to your `.bashrc`:
+# 
+# if [ -f ~/.apt_script ]; then
+#	source ~/.apt_script
+# fi
+#
+# It's fairly opinionated. Feel free to change it to suit your own needs, use it
+# as a reference for building your own, or laugh at how silly it is that I wrote
+# this at all. I wrote it because I don't like APT's CLI interface. I'm used to
+# Zypper's CLI interface, so that's kind of where this comes from.
+# 
+# MIT License:
+# 
+# Copyright (c) 2024 strangejune
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+
+
+# The path to apt.
+APT_PATH="/usr/bin/apt"
+# The path to apt-mark.
+APT_MARK_PATH="/usr/bin/apt-mark"
+# The path to apt-cache.
+APT_CACHE_PATH="/usr/bin/apt-cache"
+
+function aps_help() {
+	echo "A Package Script"
+	echo "Usage: aps [command] [apt options]"
+	echo
+	echo "aps is a series of Bash functions that aim to streamline the use of apt,"
+	echo "including making root escalation via sudo implicit, and adding command"
+	echo "shorthands."
+	echo
+	echo "Available commands:"
+	echo "	refresh, ref       | Refresh package list"
+	echo "	upgrade, up        | Upgrade installed packages"
+	echo "	install, in        | Install new packages"
+	echo "	reinstall, rein    | Reinstall packages"
+	echo "	remove, rm         | Remove installed packages"
+	echo "	autoremove, autorm | Automatically remove unused packages"
+	echo "	mark               | Mark packages with a flag"
+	echo "	search, se         | Search for a package by description keywords"
+	echo
+	echo "Other apt commands:"
+	echo "	list               | List known packages"
+	echo "	show               | Show package details"
+	echo "	full-upgrade       | Upgrade installed packages"
+	echo "	edit-sources       | Edit the source information file"
+	echo "	satisfy            | Satisfy dependency strings"
+	echo
+	echo "See apt(8) for more information about the available commands."
+	echo "See apt-mark(8) for more information about the available mark commands."
+	echo "Configuration options and syntax is detailed in apt.conf(5)."
+	echo "Information about how to configure sources can be found in sources.list(5)."
+	echo "Package and version choices can be expressed via apt_preferences(5)."
+	echo "Security details are available in apt-secure(8)."
+	return 0
+}
+
+# Refresh function.
+# 
+# This will refresh the package lists.
+function aps_refresh() {
+	sudo "$APT_PATH" update $@
+	return $?
+}
+
+# Upgrade function.
+# 
+# This will upgrade packages.
+function aps_upgrade() {
+	aps_refresh && sudo "$APT_PATH" upgrade $@
+	return $?
+}
+
+# Install function.
+# 
+# This will install packages.
+function aps_install() {
+	aps_refresh && sudo "$APT_PATH" install $@
+	return $?
+}
+
+# Install function.
+# 
+# This will reinstall packages.
+function aps_reinstall() {
+	aps_refresh && sudo "$APT_PATH" reinstall $@
+	return $?
+}
+
+# Remove function.
+# 
+# This will remove packages.
+function aps_remove() {
+	sudo "$APT_PATH" remove $@
+	return $?
+}
+
+# Autoremove function.
+# 
+# This will remove packages.
+function aps_autoremove() {
+	sudo "$APT_PATH" autoremove $@
+	return $?
+}
+
+# Mark function.
+# 
+# This will mark packages with a flag.
+function aps_mark() {
+	sudo "$APT_MARK_PATH" $@
+	return $?
+}
+
+# Search function.
+# 
+# This will search for packages.
+function aps_search() {
+	"$APT_PATH" search --names-only $@
+	return $?
+}
+
+# The main function.
+function aps() {
+	case "$@" in
+		"")
+			aps_help
+			return $?
+			;;
+
+		"help")
+			aps_help
+			return $?
+			;;
+
+		*)
+			first_arg="$1"
+			case "$first_arg" in
+				"refresh")
+					shift
+					aps_refresh $@
+					return $?
+					;;
+
+				"ref")
+					shift
+					aps_refresh $@
+					return $?
+					;;
+
+				"upgrade")
+					shift
+					aps_upgrade $@
+					return $?
+					;;
+			
+				"up")
+					shift
+					aps_upgrade $@
+					return $?
+					;;
+			
+				"install")
+					shift
+					aps_install $@
+					return $?
+					;;
+			
+				"in")
+					shift
+					aps_install $@
+					return $?
+					;;
+			
+				"reinstall")
+					shift
+					aps_reinstall $@
+					return $?
+					;;
+			
+				"rein")
+					shift
+					aps_reinstall $@
+					return $?
+					;;
+			
+				"remove")
+					shift
+					aps_remove $@
+					return $?
+					;;
+			
+				"rm")
+					shift
+					aps_remove $@
+					return $?
+					;;
+			
+				"autoremove")
+					shift
+					aps_autoremove $@
+					return $?
+					;;
+			
+				"autorm")
+					shift
+					aps_autoremove $@
+					return $?
+					;;
+
+				"mark")
+					shift
+					aps_mark $@
+					return $?
+					;;
+
+				"search")
+					shift
+					aps_search $@
+					return $?
+					;;
+
+				"se")
+					shift
+					aps_search $@
+					return $?
+					;;
+			
+				*)
+					"$APT_PATH" $@
+					return $?
+					;;
+			esac
+			;;
+	esac
+}
