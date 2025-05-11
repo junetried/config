@@ -61,7 +61,7 @@ function aps_help() {
 	echo "	remove, rm         | Remove installed packages"
 	echo "	autoremove, autorm | Automatically remove unused packages"
 	echo "	mark               | Mark packages with a flag"
-	echo "	search, se         | Search for a package by description keywords"
+	echo "	search, se         | Search for a package by name"
 	echo
 	echo "Other apt commands:"
 	echo "	list               | List known packages"
