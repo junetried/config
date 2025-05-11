@@ -56,6 +56,7 @@ function aps_help() {
 	echo "Available commands:"
 	echo "	refresh, ref       | Refresh package list"
 	echo "	upgrade, up        | Upgrade installed packages"
+	echo "	soft-upgrade, sup  | Upgrade installed packages without removing anything"
 	echo "	install, in        | Install new packages"
 	echo "	reinstall, rein    | Reinstall packages"
 	echo "	remove, rm         | Remove installed packages"
@@ -89,8 +90,20 @@ function aps_refresh() {
 
 # Upgrade function.
 # 
-# This will upgrade packages.
+# This will upgrade packages with the `full-upgrade` command. The difference
+# between this and `upgrade` (available in this script through
+# `aps_soft_upgrade`) is that `full-upgrade` will be allowed to remove packages
+# during the upgrade.
 function aps_upgrade() {
+	aps_refresh && sudo "$APT_PATH" full-upgrade $@
+	return $?
+}
+
+# Soft upgrade function.
+# 
+# This will upgrade packages without the `full-upgrade` command. Unlike
+# `full-upgrade`, this command will NOT remove any packages during the upgrade.
+function aps_soft_upgrade() {
 	aps_refresh && sudo "$APT_PATH" upgrade $@
 	return $?
 }
@@ -176,55 +189,75 @@ function aps() {
 					aps_upgrade $@
 					return $?
 					;;
-			
+
 				"up")
 					shift
 					aps_upgrade $@
 					return $?
 					;;
-			
+
+				"full-upgrade")
+					echo "NOTE: 'full-upgrade' is the default upgrade method using aps"
+					echo "NOTE: to upgrade using the apt command, use 'aps soft-upgrade'"
+					shift
+					aps_upgrade $@
+					return $?
+					;;
+
+				"soft-upgrade")
+					shift
+					aps_soft_upgrade $@
+					return $?
+					;;
+
+				"sup")
+					shift
+					aps_soft_upgrade $@
+					return $?
+					;;
+
 				"install")
 					shift
 					aps_install $@
 					return $?
 					;;
-			
+
 				"in")
 					shift
 					aps_install $@
 					return $?
 					;;
-			
+
 				"reinstall")
 					shift
 					aps_reinstall $@
 					return $?
 					;;
-			
+
 				"rein")
 					shift
 					aps_reinstall $@
 					return $?
 					;;
-			
+
 				"remove")
 					shift
 					aps_remove $@
 					return $?
 					;;
-			
+
 				"rm")
 					shift
 					aps_remove $@
 					return $?
 					;;
-			
+
 				"autoremove")
 					shift
 					aps_autoremove $@
 					return $?
 					;;
-			
+
 				"autorm")
 					shift
 					aps_autoremove $@
@@ -248,7 +281,7 @@ function aps() {
 					aps_search $@
 					return $?
 					;;
-			
+
 				*)
 					"$APT_PATH" $@
 					return $?
