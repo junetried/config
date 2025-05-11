@@ -57,7 +57,7 @@ function aps_help() {
 	echo "	refresh, ref       | Refresh package list"
 	echo "	upgrade, up        | Upgrade installed packages"
 	echo "	soft-upgrade, sup  | Upgrade installed packages without removing anything"
-	echo "	install, in        | Install new packages"
+	echo "	install, in        | Install new packages without recommended packages"
 	echo "	reinstall, rein    | Reinstall packages"
 	echo "	remove, rm         | Remove installed packages"
 	echo "	autoremove, autorm | Automatically remove unused packages"
@@ -112,7 +112,7 @@ function aps_soft_upgrade() {
 # 
 # This will install packages.
 function aps_install() {
-	aps_refresh && sudo "$APT_PATH" install $@
+	aps_refresh && sudo "$APT_PATH" install --no-install-recommends $@
 	return $?
 }
 
